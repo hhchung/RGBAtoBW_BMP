@@ -14,6 +14,15 @@ void showHelp(void){
     puts("rgbatobw input.bmp output.bmp");
 }
 
+void dump_value(uint8_t *dst, int width){
+    for(int x = 0; x < width; x++){
+        printf("%d\n", dst[x]);
+    }
+}
+
+
+
+
 int main(int argc, char *argv[]) {
     
     char openfile[FILE_NAME_SZ];
@@ -45,18 +54,20 @@ int main(int argc, char *argv[]) {
     printf("RGBA to BW is in progress....\n");
     generateRGBTable();
     start = clock();
-    for(i = 0; i < loop; i++){
-
+    
 #if NEON_ASM
-        rgbaToBw_neon(bmp->data, bmp->width, bmp->height, stride);
+    rgbaToBw_neon(bmp->data, bmp->width, bmp->height, stride);
 #else
-        rgbaToBw(bmp->data, bmp->width, bmp->height, stride);
+    rgbaToBw(bmp->data, bmp->width, bmp->height, stride);
 #endif
-    }
+
+    
+
+
     end = clock();
     //bmpPrint(bmp); 
     bmpSave(bmp, savefile);
-    bmpCalcSNR(openfile, bmp, bmp->width, bmp->height, stride);
+    //bmpCalcSNR(openfile, bmp, bmp->width, bmp->height, stride);
 
 
     printf("Execution time of rgbaToBw() : %lf \n", ((double) (end - start)) / CLOCKS_PER_SEC / loop);
